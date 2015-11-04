@@ -6,10 +6,10 @@ module Control.Coroutine.Stalling
   , processToStallingProcess
   , runStallingProcess
 
-  , fuse
   , ($$?)
 
-  , mapMaybe
+  , mapStallingProducer
+  , catMaybes
   , filter
   ) where
 
@@ -23,6 +23,7 @@ import Control.Plus as P
 import Data.Bifunctor as B
 import Data.Identity as I
 import Data.Maybe as M
+import Data.Tuple as T
 
 data StallF a b
   = Emit a b
@@ -40,25 +41,20 @@ instance functorStallF :: Functor (StallF a) where
 type StallingProducer o = CR.Co (StallF o)
 type StallingProcess = CR.Co M.Maybe
 
-fuse
-  :: forall o m a
-   . (MR.MonadRec m)
-  => StallingProducer o m a
-  -> CR.Consumer o m a
-  -> StallingProcess m a
-fuse =
-  CR.fuseWith \f q (CR.Await g) ->
-    case q of
-      Emit a b -> M.Just (f b (g a))
-      Stall b -> M.Nothing
-
 ($$?)
   :: forall o m a
    . (MR.MonadRec m)
   => StallingProducer o m a
   -> CR.Consumer o m a
   -> StallingProcess m a
-($$?) = fuse
+($$?) =
+  CR.fuseWith \f q (CR.Await g) ->
+    case q of
+      Emit o a -> M.Just (f a (g o))
+      Stall _ -> M.Nothing
+
+hole :: forall a. a
+hole = Unsafe.Coerce.unsafeCoerce ""
 
 runStallingProcess
   :: forall m a
@@ -88,20 +84,26 @@ processToStallingProcess =
   FT.interpret
     (M.Just <<< I.runIdentity)
 
--- | Simultaneously map and filter a `StallingProducer`.
-mapMaybe
+mapStallingProducer
   :: forall i o m a
    . (Functor m)
-  => (i -> M.Maybe o)
+  => (i -> o)
   -> StallingProducer i m a
   -> StallingProducer o m a
-mapMaybe f =
+mapStallingProducer =
+  FT.interpret <<< B.lmap
+
+catMaybes
+  :: forall o m a
+   . (Functor m)
+  => StallingProducer (M.Maybe o) m a
+  -> StallingProducer o m a
+catMaybes =
   FT.interpret \q ->
     case q of
-      Emit i a -> M.maybe (Stall a) (flip Emit a) (f i)
+      Emit i a -> M.maybe (Stall a) (flip Emit a) i
       Stall a -> Stall a
 
--- | Filter a `StallingProducer`.
 filter
   :: forall o m a
    . (Functor m)
@@ -109,5 +111,5 @@ filter
   -> StallingProducer o m a
   -> StallingProducer o m a
 filter p =
-  mapMaybe \x ->
+  catMaybes <<< mapStallingProducer \x ->
     if p x then M.Just x else M.Nothing

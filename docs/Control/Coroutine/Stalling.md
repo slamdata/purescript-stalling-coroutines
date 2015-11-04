@@ -26,12 +26,6 @@ type StallingProducer o = Co (StallF o)
 type StallingProcess = Co Maybe
 ```
 
-#### `fuse`
-
-``` purescript
-fuse :: forall o m a. (MonadRec m) => StallingProducer o m a -> Consumer o m a -> StallingProcess m a
-```
-
 #### `($$?)`
 
 ``` purescript
@@ -58,20 +52,22 @@ producerToStallingProducer :: forall o m a. (Functor m) => Producer o m a -> Sta
 processToStallingProcess :: forall m a. (Functor m) => Process m a -> StallingProcess m a
 ```
 
-#### `mapMaybe`
+#### `mapStallingProducer`
 
 ``` purescript
-mapMaybe :: forall i o m a. (Functor m) => (i -> Maybe o) -> StallingProducer i m a -> StallingProducer o m a
+mapStallingProducer :: forall i o m a. (Functor m) => (i -> o) -> StallingProducer i m a -> StallingProducer o m a
 ```
 
-Simultaneously map and filter a `StallingProducer`.
+#### `catMaybes`
+
+``` purescript
+catMaybes :: forall o m a. (Functor m) => StallingProducer (Maybe o) m a -> StallingProducer o m a
+```
 
 #### `filter`
 
 ``` purescript
 filter :: forall o m a. (Functor m) => (o -> Boolean) -> StallingProducer o m a -> StallingProducer o m a
 ```
-
-Filter a `StallingProducer`.
 
 
