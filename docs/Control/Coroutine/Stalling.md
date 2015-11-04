@@ -58,4 +58,20 @@ producerToStallingProducer :: forall o m a. (Functor m) => Producer o m a -> Sta
 processToStallingProcess :: forall m a. (Functor m) => Process m a -> StallingProcess m a
 ```
 
+#### `mapMaybe`
+
+``` purescript
+mapMaybe :: forall i o m a. (Functor m) => (i -> Maybe o) -> StallingProducer i m a -> StallingProducer o m a
+```
+
+Simultaneously map and filter a `StallingProducer`.
+
+#### `filter`
+
+``` purescript
+filter :: forall o m a. (Functor m) => (o -> Boolean) -> StallingProducer o m a -> StallingProducer o m a
+```
+
+Filter a `StallingProducer`.
+
 

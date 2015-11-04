@@ -5,8 +5,12 @@ module Control.Coroutine.Stalling
   , producerToStallingProducer
   , processToStallingProcess
   , runStallingProcess
+
   , fuse
   , ($$?)
+
+  , mapMaybe
+  , filter
   ) where
 
 import Prelude
@@ -84,5 +88,26 @@ processToStallingProcess =
   FT.interpret
     (M.Just <<< I.runIdentity)
 
-hole :: forall a. a
-hole = Unsafe.Coerce.unsafeCoerce ""
+-- | Simultaneously map and filter a `StallingProducer`.
+mapMaybe
+  :: forall i o m a
+   . (Functor m)
+  => (i -> M.Maybe o)
+  -> StallingProducer i m a
+  -> StallingProducer o m a
+mapMaybe f =
+  FT.interpret \q ->
+    case q of
+      Emit i a -> M.maybe (Stall a) (flip Emit a) (f i)
+      Stall a -> Stall a
+
+-- | Filter a `StallingProducer`.
+filter
+  :: forall o m a
+   . (Functor m)
+  => (o -> Boolean)
+  -> StallingProducer o m a
+  -> StallingProducer o m a
+filter p =
+  mapMaybe \x ->
+    if p x then M.Just x else M.Nothing
