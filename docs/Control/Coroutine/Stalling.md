@@ -20,6 +20,8 @@ instance functorStallF :: Functor (StallF a)
 stallF :: forall a b r. (a -> b -> r) -> (b -> r) -> StallF a b -> r
 ```
 
+The induction principle for `StallF`.
+
 #### `StallingProducer`
 
 ``` purescript

@@ -36,6 +36,7 @@ data StallF a b
   = Emit a b
   | Stall b
 
+-- | The induction principle for `StallF`.
 stallF
   :: forall a b r
    . (a -> b -> r)
@@ -75,6 +76,7 @@ stall
 stall =
   FT.liftFreeT (Stall unit)
 
+-- Fuse a `StallingProducer` with a `Consumer`.
 ($$?)
   :: forall o m a
    . (MR.MonadRec m)
@@ -86,9 +88,6 @@ stall =
     case q of
       Emit o a -> M.Just (f a (g o))
       Stall _ -> M.Nothing
-
-hole :: forall a. a
-hole = Unsafe.Coerce.unsafeCoerce ""
 
 runStallingProcess
   :: forall m a
