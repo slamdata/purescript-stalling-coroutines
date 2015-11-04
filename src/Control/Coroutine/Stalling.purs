@@ -1,7 +1,10 @@
 module Control.Coroutine.Stalling
-  ( StallF(..)
-  , StallingProducer()
+  ( StallingProducer()
   , StallingProcess()
+  , emit
+  , stall
+  , StallF(..)
+  , stallF
   , producerToStallingProducer
   , processToStallingProcess
   , runStallingProcess
@@ -19,8 +22,12 @@ import Control.Coroutine as CR
 import Control.Monad.Free.Trans as FT
 import Control.Monad.Maybe.Trans as MT
 import Control.Monad.Rec.Class as MR
+import Control.Monad.Trans as TR
+import Control.Bind ((>=>))
 import Control.Plus as P
+import Data.Functor (($>))
 import Data.Bifunctor as B
+import Data.Either as E
 import Data.Identity as I
 import Data.Maybe as M
 import Data.Tuple as T
@@ -28,6 +35,17 @@ import Data.Tuple as T
 data StallF a b
   = Emit a b
   | Stall b
+
+stallF
+  :: forall a b r
+   . (a -> b -> r)
+  -> (b -> r)
+  -> StallF a b
+  -> r
+stallF e s q=
+  case q of
+    Emit a b -> e a b
+    Stall b -> s b
 
 instance bifunctorStallF :: B.Bifunctor StallF where
   bimap f g q =
@@ -40,6 +58,22 @@ instance functorStallF :: Functor (StallF a) where
 
 type StallingProducer o = CR.Co (StallF o)
 type StallingProcess = CR.Co M.Maybe
+
+emit
+  :: forall m o
+   . (Monad m)
+  => o
+  -> StallingProducer o m Unit
+emit =
+  FT.liftFreeT
+    <<< flip Emit unit
+
+stall
+  :: forall m o
+   . (Monad m)
+  => StallingProducer o m Unit
+stall =
+  FT.liftFreeT (Stall unit)
 
 ($$?)
   :: forall o m a
@@ -95,18 +129,21 @@ mapStallingProducer =
 
 catMaybes
   :: forall o m a
-   . (Functor m)
+   . (MR.MonadRec m)
   => StallingProducer (M.Maybe o) m a
   -> StallingProducer o m a
 catMaybes =
-  FT.interpret \q ->
-    case q of
-      Emit i a -> M.maybe (Stall a) (flip Emit a) i
-      Stall a -> Stall a
+  MR.tailRecM $
+    FT.resume >>> TR.lift >=>
+      E.either
+        (E.Right >>> pure)
+        (stallF
+          (\mo t -> M.maybe (pure unit) emit mo $> E.Left t)
+          (E.Left >>> pure))
 
 filter
   :: forall o m a
-   . (Functor m)
+   . (MR.MonadRec m)
   => (o -> Boolean)
   -> StallingProducer o m a
   -> StallingProducer o m a

@@ -14,6 +14,12 @@ instance bifunctorStallF :: Bifunctor StallF
 instance functorStallF :: Functor (StallF a)
 ```
 
+#### `stallF`
+
+``` purescript
+stallF :: forall a b r. (a -> b -> r) -> (b -> r) -> StallF a b -> r
+```
+
 #### `StallingProducer`
 
 ``` purescript
@@ -24,6 +30,18 @@ type StallingProducer o = Co (StallF o)
 
 ``` purescript
 type StallingProcess = Co Maybe
+```
+
+#### `emit`
+
+``` purescript
+emit :: forall m o. (Monad m) => o -> StallingProducer o m Unit
+```
+
+#### `stall`
+
+``` purescript
+stall :: forall m o. (Monad m) => StallingProducer o m Unit
 ```
 
 #### `($$?)`
@@ -61,13 +79,13 @@ mapStallingProducer :: forall i o m a. (Functor m) => (i -> o) -> StallingProduc
 #### `catMaybes`
 
 ``` purescript
-catMaybes :: forall o m a. (Functor m) => StallingProducer (Maybe o) m a -> StallingProducer o m a
+catMaybes :: forall o m a. (MonadRec m) => StallingProducer (Maybe o) m a -> StallingProducer o m a
 ```
 
 #### `filter`
 
 ``` purescript
-filter :: forall o m a. (Functor m) => (o -> Boolean) -> StallingProducer o m a -> StallingProducer o m a
+filter :: forall o m a. (MonadRec m) => (o -> Boolean) -> StallingProducer o m a -> StallingProducer o m a
 ```
 
 
