@@ -1,6 +1,7 @@
 {
   "name": "purescript-stalling-coroutines",
-  "version": "1.0.0",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
   "moduleType": [
     "node"
   ],
@@ -14,7 +15,7 @@
     "purescript-console": "^0.1.0",
     "purescript-coroutines": "^0.5.0",
     "purescript-freet": "^0.3.0",
-    "purescript-tailrec": "~0.3.1",
-    "purescript-transformers": "~0.8.2"
+    "purescript-tailrec": "^0.3.1",
+    "purescript-transformers": "^0.8.2"
   }
 }
