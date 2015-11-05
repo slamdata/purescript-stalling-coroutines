@@ -43,7 +43,7 @@ stallF
   -> (b -> r)
   -> StallF a b
   -> r
-stallF e s q=
+stallF e s q =
   case q of
     Emit a b -> e a b
     Stall b -> s b
