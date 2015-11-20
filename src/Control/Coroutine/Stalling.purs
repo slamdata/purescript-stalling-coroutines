@@ -30,7 +30,6 @@ import Data.Bifunctor as B
 import Data.Either as E
 import Data.Identity as I
 import Data.Maybe as M
-import Data.Tuple as T
 
 data StallF a b
   = Emit a b
