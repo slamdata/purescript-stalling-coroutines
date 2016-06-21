@@ -1,3 +1,6 @@
-bower_components
-output
-.psci*
+/.*
+!/.gitignore
+!/.travis.yml
+/bower_components/
+/node_modules/
+/output/

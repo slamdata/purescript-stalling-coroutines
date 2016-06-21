@@ -21,5 +21,9 @@
     "purescript-tailrec": "^1.0.0",
     "purescript-transformers": "^1.0.0",
     "purescript-prelude": "^1.0.1"
+  },
+  "devDependencies": {
+    "purescript-refs": "^1.0.0",
+    "purescript-assert": "^1.0.0"
   }
 }
