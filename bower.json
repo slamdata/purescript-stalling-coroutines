@@ -1,29 +1,32 @@
 {
   "name": "purescript-stalling-coroutines",
-  "version": "0.1.0",
   "license": "Apache-2.0",
   "authors": [
     "Jon Sterling <jon@jonmsterling.com>"
   ],
-  "moduleType": [
-    "node"
-  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/slamdata/purescript-stalling-coroutines.git"
+  },
   "ignore": [
     "**/.*",
-    "node_modules",
     "bower_components",
-    "output"
+    "node_modules",
+    "output",
+    "test",
+    "bower.json",
+    "package.json"
   ],
   "dependencies": {
     "purescript-console": "^1.0.0",
     "purescript-coroutines": "^1.0.0",
     "purescript-freet": "^1.0.0",
+    "purescript-prelude": "^1.0.1",
     "purescript-tailrec": "^1.0.0",
-    "purescript-transformers": "^1.0.0",
-    "purescript-prelude": "^1.0.1"
+    "purescript-transformers": "^1.0.0"
   },
   "devDependencies": {
-    "purescript-refs": "^1.0.0",
-    "purescript-assert": "^1.0.0"
+    "purescript-assert": "^1.0.0",
+    "purescript-refs": "^1.0.0"
   }
 }
