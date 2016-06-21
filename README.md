@@ -1,4 +1,4 @@
-### purescript-stalling-coroutines
+# purescript-stalling-coroutines
 
 [![Latest release](http://img.shields.io/bower/v/purescript-stalling-coroutines.svg)](https://github.com/slamdata/purescript-stalling-coroutines/releases)
 [![Build Status](https://travis-ci.org/slamdata/purescript-stalling-coroutines.svg?branch=master)](https://travis-ci.org/slamdata/purescript-stalling-coroutines)
