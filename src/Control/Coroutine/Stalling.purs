@@ -9,6 +9,7 @@ module Control.Coroutine.Stalling
   , processToStallingProcess
   , runStallingProcess
 
+  , fuse
   , ($$?)
 
   , mapStallingProducer
@@ -76,17 +77,18 @@ stall =
   FT.liftFreeT (Stall unit)
 
 -- Fuse a `StallingProducer` with a `Consumer`.
-($$?)
+fuse
   :: forall o m a
    . (MR.MonadRec m)
   => StallingProducer o m a
   -> CR.Consumer o m a
   -> StallingProcess m a
-($$?) =
+fuse =
   CR.fuseWith \f q (CR.Await g) ->
     case q of
       Emit o a -> M.Just (f a (g o))
       Stall _ -> M.Nothing
+infix 0 fuse as $$?
 
 runStallingProcess
   :: forall m a
