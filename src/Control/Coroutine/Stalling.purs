@@ -22,11 +22,11 @@ import Prelude
 import Control.Coroutine as CR
 import Control.Monad.Free.Trans as FT
 import Control.Monad.Maybe.Trans as MT
-import Control.Monad.Rec.Class as MR
+import Control.Monad.Rec.Class (class MonadRec, tailRecM)
 import Control.Monad.Trans as TR
-import Control.Bind ((>=>))
+import Control.Parallel.Class (class MonadPar)
 import Control.Plus as P
-import Data.Functor (($>))
+
 import Data.Bifunctor as B
 import Data.Either as E
 import Data.Identity as I
@@ -77,7 +77,7 @@ stall =
 -- Fuse a `StallingProducer` with a `Consumer`.
 fuse
   :: forall o m a
-   . MR.MonadRec m
+   . (MonadRec m, MonadPar m)
   => StallingProducer o m a
   -> CR.Consumer o m a
   -> StallingProcess m a
@@ -91,7 +91,7 @@ infix 4 fuse as $$?
 
 runStallingProcess
   :: forall m a
-   . MR.MonadRec m
+   . MonadRec m
   => StallingProcess m a
   -> m (M.Maybe a)
 runStallingProcess =
@@ -128,11 +128,11 @@ mapStallingProducer =
 
 catMaybes
   :: forall o m a
-   . MR.MonadRec m
+   . MonadRec m
   => StallingProducer (M.Maybe o) m a
   -> StallingProducer o m a
 catMaybes =
-  MR.tailRecM $
+  tailRecM $
     FT.resume >>> TR.lift >=>
       E.either
         (E.Right >>> pure)
@@ -142,7 +142,7 @@ catMaybes =
 
 filter
   :: forall o m a
-   . MR.MonadRec m
+   . MonadRec m
   => (o -> Boolean)
   -> StallingProducer o m a
   -> StallingProducer o m a

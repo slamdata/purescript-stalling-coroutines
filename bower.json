@@ -19,13 +19,14 @@
   ],
   "dependencies": {
     "purescript-console": "^1.0.0",
-    "purescript-coroutines": "^1.0.0",
+    "purescript-coroutines": "^2.0.0",
     "purescript-freet": "^1.0.0",
     "purescript-prelude": "^1.0.1",
     "purescript-tailrec": "^1.0.0",
     "purescript-transformers": "^1.0.0"
   },
   "devDependencies": {
+    "purescript-aff": "^1.0.0",
     "purescript-assert": "^1.0.0",
     "purescript-refs": "^1.0.0"
   }
