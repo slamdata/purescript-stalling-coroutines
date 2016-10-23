@@ -14,7 +14,6 @@ import Control.Monad.Eff.Ref (REF, Ref, newRef, readRef, modifyRef)
 import Control.Monad.Rec.Class (class MonadRec)
 
 import Data.Array (snoc)
-import Data.Functor (($>))
 import Data.Maybe (Maybe(..))
 
 import Test.Assert (ASSERT, assert)

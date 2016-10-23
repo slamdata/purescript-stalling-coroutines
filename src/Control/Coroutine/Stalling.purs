@@ -22,15 +22,15 @@ import Prelude
 import Control.Coroutine as CR
 import Control.Monad.Free.Trans as FT
 import Control.Monad.Maybe.Trans as MT
-import Control.Monad.Rec.Class (class MonadRec, tailRecM)
-import Control.Monad.Trans as TR
-import Control.Parallel.Class (class MonadPar)
+import Control.Monad.Rec.Class (class MonadRec, tailRecM, Step(..))
+import Control.Monad.Trans.Class (lift)
+import Control.Parallel (class Parallel)
 import Control.Plus as P
 
 import Data.Bifunctor as B
 import Data.Either as E
-import Data.Identity as I
 import Data.Maybe as M
+import Data.Newtype (unwrap)
 
 data StallF a b
   = Emit a b
@@ -76,8 +76,8 @@ stall =
 
 -- Fuse a `StallingProducer` with a `Consumer`.
 fuse
-  :: forall o m a
-   . (MonadRec m, MonadPar m)
+  :: forall o m f a
+   . (MonadRec m, Parallel f m)
   => StallingProducer o m a
   -> CR.Consumer o m a
   -> StallingProcess m a
@@ -115,7 +115,7 @@ processToStallingProcess
   -> StallingProcess m a
 processToStallingProcess =
   FT.interpret
-    (M.Just <<< I.runIdentity)
+    (M.Just <<< unwrap)
 
 mapStallingProducer
   :: forall i o m a
@@ -133,12 +133,12 @@ catMaybes
   -> StallingProducer o m a
 catMaybes =
   tailRecM $
-    FT.resume >>> TR.lift >=>
+    FT.resume >>> lift >=>
       E.either
-        (E.Right >>> pure)
+        (Done >>> pure)
         (stallF
-          (\mo t -> M.maybe (pure unit) emit mo $> E.Left t)
-          (E.Left >>> pure))
+          (\mo t -> M.maybe (pure unit) emit mo $> Loop t)
+          (Loop >>> pure))
 
 filter
   :: forall o m a

@@ -18,16 +18,16 @@
     "package.json"
   ],
   "dependencies": {
-    "purescript-console": "^1.0.0",
-    "purescript-coroutines": "^2.0.0",
-    "purescript-freet": "^1.0.0",
-    "purescript-prelude": "^1.0.1",
-    "purescript-tailrec": "^1.0.0",
-    "purescript-transformers": "^1.0.0"
+    "purescript-console": "^2.0.0",
+    "purescript-coroutines": "^3.0.0",
+    "purescript-freet": "^2.0.0",
+    "purescript-prelude": "^2.1.0",
+    "purescript-tailrec": "^2.0.0",
+    "purescript-transformers": "^2.0.1"
   },
   "devDependencies": {
-    "purescript-aff": "^1.0.0",
-    "purescript-assert": "^1.0.0",
-    "purescript-refs": "^1.0.0"
+    "purescript-aff": "^2.0.0",
+    "purescript-assert": "^2.0.0",
+    "purescript-refs": "^2.0.0"
   }
 }
