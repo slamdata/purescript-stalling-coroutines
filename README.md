@@ -1,8 +1,8 @@
 # purescript-stalling-coroutines
 
 [![Latest release](http://img.shields.io/bower/v/purescript-stalling-coroutines.svg)](https://github.com/slamdata/purescript-stalling-coroutines/releases)
-[![Build Status](https://travis-ci.org/slamdata/purescript-stalling-coroutines.svg?branch=master)](https://travis-ci.org/slamdata/purescript-stalling-coroutines)
-[![Dependency Status](https://www.versioneye.com/user/projects/576965e5fdabcd003c031796/badge.svg?style=flat)](https://www.versioneye.com/user/projects/576965e5fdabcd003c031796)
+[![Build status](https://travis-ci.org/slamdata/purescript-stalling-coroutines.svg?branch=master)](https://travis-ci.org/slamdata/purescript-stalling-coroutines)
+[![Dependency status](https://img.shields.io/librariesio/github/slamdata/purescript-stalling-coroutines.svg)](https://libraries.io/github/slamdata/purescript-stalling-coroutines)
 
 Coroutines for stalling streams (equivalent to `ListT`). This can be used as an
 alternative to `Control.Coroutine.Producer` that supports filtering.
